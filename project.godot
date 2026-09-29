@@ -18,8 +18,12 @@ config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 
 window/size/viewport_width=480
 window/size/viewport_height=270
+window/size/window_width_override=800
+window/size/window_height_override=600
+window/energy_saving/keep_screen_on=false
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/stretch/scale_mode="integer"
 
 [dotnet]
 

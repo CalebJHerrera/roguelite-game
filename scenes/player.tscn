@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://c68ctleigshi3"]
 
 [ext_resource type="Texture2D" uid="uid://dhn0g5f8nskcg" path="res://assets/player_placeholder.png" id="1_3vyb7"]
-[ext_resource type="Script" uid="uid://6qfdjy1nhhx3" path="res://scripts/Game/Player/MovePlayer.cs" id="1_qhqgy"]
-[ext_resource type="Script" uid="uid://dlyaqxh8j2ggi" path="res://scripts/Game/Player/StateMachine.cs" id="2_g2els"]
+[ext_resource type="Script" uid="uid://dlyaqxh8j2ggi" path="res://scripts/Game/Player/statemachine/StateMachine.cs" id="2_g2els"]
+[ext_resource type="Script" uid="uid://bjypogi6gf10d" path="res://scripts/Game/MovementController.cs" id="3_qhqgy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0xm2m"]
 size = Vector2(24, 40)
@@ -24,7 +24,6 @@ size = Vector2(13, 31)
 [sub_resource type="BlackboardPlan" id="BlackboardPlan_bmph7"]
 
 [node name="Player" type="CharacterBody2D" unique_id=1200534386]
-script = ExtResource("1_qhqgy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=579102683]
 shape = SubResource("RectangleShape2D_0xm2m")
@@ -58,3 +57,8 @@ script = ExtResource("2_g2els")
 [node name="Fall" type="LimboState" parent="StateMachine/AirHSM" unique_id=893069440]
 
 [node name="Dash" type="LimboState" parent="StateMachine" unique_id=106776043]
+
+[node name="MovementController" type="Node" parent="." unique_id=489200829 node_paths=PackedStringArray("actor")]
+script = ExtResource("3_qhqgy")
+actor = NodePath("..")
+metadata/_custom_type_script = "uid://bjypogi6gf10d"

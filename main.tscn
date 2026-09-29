@@ -17,6 +17,8 @@ tile_size = Vector2i(32, 32)
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_h2yge")
 
+[sub_resource type="TileSet" id="TileSet_040f2"]
+
 [node name="Main" type="Node" unique_id=1985908463]
 
 [node name="Player" parent="." unique_id=1200534386 instance=ExtResource("1_ig7tw")]
@@ -28,3 +30,4 @@ tile_map_data = PackedByteArray("AAD//wEAAAAAAAAAAAAAAAEAAAAAAAAAAAABAAEAAAAAAAA
 tile_set = SubResource("TileSet_bmph7")
 
 [node name="Decorations" type="TileMapLayer" parent="." unique_id=1325164402]
+tile_set = SubResource("TileSet_040f2")

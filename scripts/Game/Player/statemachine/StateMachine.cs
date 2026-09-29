@@ -1,4 +1,4 @@
-namespace Scripts.Player.StateMachine;
+namespace Game.Player.StateMachine;
 
 using Godot;
 
@@ -21,14 +21,14 @@ public partial class Hsm : LimboHsm
 
     private void InitializeHsm()
     {
-        AddTransition(groundHsm, airHsm, groundHsm.TO_AIR);
-        AddTransition(groundHsm, dash, groundHsm.DASH);
+        AddTransition(groundHsm, airHsm, "GROUND_TO_AIR");
+        AddTransition(groundHsm, dash, "GROUND_TO_DASH");
 
-        AddTransition(airHsm, groundHsm, airHsm.TO_GROUND);
-        AddTransition(airHsm, dash, airHsm.DASH);
+        AddTransition(airHsm, groundHsm, "AIR_TO_GROUND");
+        AddTransition(airHsm, dash, "AIR_TO_DASH");
 
-        AddTransition(dash, groundHsm, dash.TO_GROUND);
-        AddTransition(dash, airHsm, dash.TO_AIR);
+        AddTransition(dash, groundHsm, "DASH_TO_GROUND");
+        AddTransition(dash, airHsm, "DASH_TO_AIR");
 
         InitialState = groundHsm;
         Initialize(this);
