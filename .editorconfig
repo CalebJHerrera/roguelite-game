@@ -1,4 +1,22 @@
 root = true
 
-[*]
+[*.cs]
+# Godot Core Formatting Rules
 charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+max_line_length = 100
+
+# Microsoft / Allman style braces (New line everywhere)
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+# Godot-friendly Spacing preferences
+csharp_space_after_cast = false
+csharp_space_after_keywords_in_control_flow_statements = true
+
+# Use explicit access modifiers (Godot style rule)
+dotnet_style_require_accessibility_modifiers = always:suggestion

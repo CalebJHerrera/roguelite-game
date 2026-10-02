@@ -1,11 +1,17 @@
 [gd_scene format=3 uid="uid://c68ctleigshi3"]
 
 [ext_resource type="Texture2D" uid="uid://dhn0g5f8nskcg" path="res://assets/player_placeholder.png" id="1_3vyb7"]
-[ext_resource type="Script" uid="uid://dlyaqxh8j2ggi" path="res://scripts/Game/Player/statemachine/StateMachine.cs" id="2_g2els"]
-[ext_resource type="Script" uid="uid://bjypogi6gf10d" path="res://scripts/Game/MovementController.cs" id="3_qhqgy"]
+[ext_resource type="Script" uid="uid://1bnbtrofw3np" path="res://scripts/game/player/state-machine/StateMachine.cs" id="2_g2els"]
+[ext_resource type="Script" uid="uid://c1xv523qeh46f" path="res://scripts/game/player/state-machine/GroundState.cs" id="3_dqkch"]
+[ext_resource type="Script" uid="uid://bjypogi6gf10d" path="res://scripts/game/MovementController.cs" id="3_qhqgy"]
+[ext_resource type="Script" uid="uid://bnx0rywcowqlk" path="res://scripts/game/player/state-machine/JumpState.cs" id="4_qlg0r"]
+[ext_resource type="Script" uid="uid://do6t2ee0kst03" path="res://scripts/game/player/state-machine/FallState.cs" id="5_tuyoq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0xm2m"]
 size = Vector2(24, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bmph7"]
+size = Vector2(13, 31)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_0xm2m"]
 animations = [{
@@ -18,18 +24,17 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_bmph7"]
-size = Vector2(13, 31)
-
 [sub_resource type="BlackboardPlan" id="BlackboardPlan_bmph7"]
+var/MovementController/name = &"MovementController"
+var/MovementController/type = 22
+var/MovementController/value = NodePath("../MovementController")
+var/MovementController/hint = 26
+var/MovementController/hint_string = "MovementController"
 
 [node name="Player" type="CharacterBody2D" unique_id=1200534386]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=579102683]
 shape = SubResource("RectangleShape2D_0xm2m")
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=539037735]
-sprite_frames = SubResource("SpriteFrames_0xm2m")
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1263324318]
 
@@ -38,27 +43,31 @@ position = Vector2(-0.5, -0.5)
 shape = SubResource("RectangleShape2D_bmph7")
 debug_color = Color(0.9999997, 0.00903727, 0.06697896, 0.41960785)
 
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=539037735]
+sprite_frames = SubResource("SpriteFrames_0xm2m")
+
 [node name="StateMachine" type="LimboHSM" parent="." unique_id=1836287180]
 blackboard_plan = SubResource("BlackboardPlan_bmph7")
 script = ExtResource("2_g2els")
 
-[node name="GroundHSM" type="LimboHSM" parent="StateMachine" unique_id=1500599406]
+[node name="Ground" type="LimboState" parent="StateMachine" unique_id=1909424140]
+script = ExtResource("3_dqkch")
 
-[node name="Idle" type="LimboState" parent="StateMachine/GroundHSM" unique_id=1909424140]
+[node name="Jump" type="LimboState" parent="StateMachine" unique_id=893069440]
+script = ExtResource("4_qlg0r")
 
-[node name="Walk" type="LimboState" parent="StateMachine/GroundHSM" unique_id=193043493]
-
-[node name="Run" type="LimboState" parent="StateMachine/GroundHSM" unique_id=252927226]
-
-[node name="Land" type="LimboState" parent="StateMachine/GroundHSM" unique_id=1648080742]
-
-[node name="AirHSM" type="LimboHSM" parent="StateMachine" unique_id=1854359995]
-
-[node name="Fall" type="LimboState" parent="StateMachine/AirHSM" unique_id=893069440]
+[node name="Fall" type="LimboState" parent="StateMachine" unique_id=104559532]
+script = ExtResource("5_tuyoq")
 
 [node name="Dash" type="LimboState" parent="StateMachine" unique_id=106776043]
 
-[node name="MovementController" type="Node" parent="." unique_id=489200829 node_paths=PackedStringArray("actor")]
+[node name="Stun" type="LimboState" parent="StateMachine" unique_id=126496179]
+
+[node name="MovementController" type="Node" parent="." unique_id=489200829 node_paths=PackedStringArray("Actor")]
 script = ExtResource("3_qhqgy")
-actor = NodePath("..")
+Actor = NodePath("..")
+BaseSpeed = 250
+DashVelocity = 800
+Acceleration = 25.0
+Friction = 20.0
 metadata/_custom_type_script = "uid://bjypogi6gf10d"

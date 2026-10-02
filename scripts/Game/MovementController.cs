@@ -8,54 +8,112 @@ using Godot;
 public partial class MovementController : Node
 {
     [ExportGroup("Actor")]
-    [Export] CharacterBody2D actor;
+    [Export] public CharacterBody2D Actor { get; set; }
 
     [ExportGroup("Physics")]
-    [Export] int baseSpeed = 200;
-    [Export] int jumpVelocity = 400;
-    [Export] int dashVelocity = 300;
-    [Export] float acceleration = 0.1f;
-    [Export] float friction = 0.1f;
-    [Export] float speedMultiplier = 1.0f;
+    [Export] public int BaseSpeed { get; set; } = 200;
+    [Export] public int JumpVelocity { get; set; } = 400;
+    [Export] public int DashVelocity { get; set; } = 300;
+    [Export] public float Acceleration { get; set; } = 35.0f;
+    [Export] public float Friction { get; set; } = 25.0f;
+    [Export] public float SpeedMultiplier { get; set; } = 1.0f;
 
     [ExportGroup("Jump Timers")]
-    [Export] float coyoteTimer = 0.15f;
-    [Export] float bufferTimer = 0.15f;
+    [Export] private float CoyoteTime { get; set; } = 0.15f;
+    [Export] private float BufferTime { get; set; } = 0.15f;
 
-    public void MoveHorizontal(int xDir, double delta)
+    // Actual Timers
+    private float CoyoteTimer { get; set; } = 0f;
+    private float BufferTimer { get; set; } = 0f;
+
+    private float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
+
+    public void MoveHorizontal(float xDir, double delta)
     {
+        float lerpFactor = CalcLerpFactor(Acceleration, delta);
+        float targetDirection = Mathf.Lerp(Actor.Velocity.X, xDir * BaseSpeed * SpeedMultiplier, lerpFactor);
+
+        Actor.Velocity = new Vector2(targetDirection, Actor.Velocity.Y);
     }
 
     public void ApplyGravity(double delta)
     {
+        float afterGravity = Actor.Velocity.Y + Gravity * (float)delta;
+        Actor.Velocity = new Vector2(Actor.Velocity.X, afterGravity);
     }
 
-    public void ApplyFriction(double delta)
+    public void ApplyFriction(double delta, float multiplier = 1.0f)
     {
+        // Title mislading, it's just horizontal friction.
+        float lerpFactor = CalcLerpFactor(Friction * multiplier, delta);
+        float afterFriction = Mathf.Lerp(Actor.Velocity.X, 0, lerpFactor);
+
+        if (Mathf.Abs(afterFriction) < 1.0f)
+        {
+            afterFriction = 0.0f; // Lerp is asymptotic, gotta make it actually completely stop this way.
+        }
+
+        Actor.Velocity = new Vector2(afterFriction, Actor.Velocity.Y);
     }
 
     public void Dash()
     {
     }
 
-    public void Jump()
+    public void QueueJump()
     {
+        BufferTimer = BufferTime;
     }
 
-    public void CheckJump()
+    private bool CheckJump()
     {
+        if (CoyoteTimer > 0 && BufferTimer > 0)
+        {
+            return true;
+        }
+
+        return false;
     }
 
-    public void UpdateTimers()
+    private void ExecuteJump()
     {
+        if (CheckJump())
+        {
+            ClearTimers();
+            Actor.Velocity = new Vector2(Actor.Velocity.X, -JumpVelocity);
+        }
     }
 
-    public void ClearTimers()
+    private void ClearTimers()
     {
+        CoyoteTimer = 0f;
+        BufferTimer = 0f;
+    }
+
+    private void UpdateTimers(double delta)
+    {
+        CoyoteTimer -= (float)delta;
+        BufferTimer -= (float)delta;
+
+        if (Actor.IsOnFloor())
+        {
+            CoyoteTimer = CoyoteTime;
+        }
+    }
+
+    private static float CalcLerpFactor(float var, double delta)
+    {
+        return 1.0f - Mathf.Exp(-var * (float)delta); // Had a bug with weird friction and acceleration (jittery), so asked gemini, no idea how this works.
     }
 
     public void Move()
     {
-        actor.MoveAndSlide();
+        Actor.MoveAndSlide();
+    }
+
+    public override void _PhysicsProcess(double delta)
+    {
+        ExecuteJump();
+        UpdateTimers(delta);
     }
 }
