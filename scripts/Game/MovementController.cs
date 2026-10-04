@@ -18,7 +18,7 @@ public partial class MovementController : Node
     [Export] public float Friction { get; set; } = 25.0f;
     [Export] public float SpeedMultiplier { get; set; } = 1.0f;
 
-    [ExportGroup("Jump Timers")]
+    [ExportGroup("Jumps")]
     [Export] private float CoyoteTime { get; set; } = 0.15f;
     [Export] private float BufferTime { get; set; } = 0.15f;
 
@@ -27,6 +27,7 @@ public partial class MovementController : Node
     private float BufferTimer { get; set; } = 0f;
 
     private float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
+    private float FrictionFactor = 1.0f;
 
     public void MoveHorizontal(float xDir, double delta)
     {
@@ -45,7 +46,8 @@ public partial class MovementController : Node
     public void ApplyFriction(double delta, float multiplier = 1.0f)
     {
         // Title mislading, it's just horizontal friction.
-        float lerpFactor = CalcLerpFactor(Friction * multiplier, delta);
+        FrictionFactor = Mathf.MoveToward(FrictionFactor, multiplier, (float)delta * 6.0f);
+        float lerpFactor = CalcLerpFactor(Friction * FrictionFactor, delta);
         float afterFriction = Mathf.Lerp(Actor.Velocity.X, 0, lerpFactor);
 
         if (Mathf.Abs(afterFriction) < 1.0f)

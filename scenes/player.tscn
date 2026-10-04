@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://bjypogi6gf10d" path="res://scripts/game/MovementController.cs" id="3_qhqgy"]
 [ext_resource type="Script" uid="uid://bnx0rywcowqlk" path="res://scripts/game/player/state-machine/JumpState.cs" id="4_qlg0r"]
 [ext_resource type="Script" uid="uid://do6t2ee0kst03" path="res://scripts/game/player/state-machine/FallState.cs" id="5_tuyoq"]
+[ext_resource type="Script" uid="uid://cg444qjad4vfq" path="res://scripts/game/player/state-machine/DashState.cs" id="6_fjrip"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0xm2m"]
 size = Vector2(24, 40)
@@ -30,6 +31,11 @@ var/MovementController/type = 22
 var/MovementController/value = NodePath("../MovementController")
 var/MovementController/hint = 26
 var/MovementController/hint_string = "MovementController"
+var/var/name = &"var"
+var/var/type = 3
+var/var/value = 0.0
+var/var/hint = 0
+var/var/hint_string = ""
 
 [node name="Player" type="CharacterBody2D" unique_id=1200534386]
 
@@ -60,13 +66,15 @@ script = ExtResource("4_qlg0r")
 script = ExtResource("5_tuyoq")
 
 [node name="Dash" type="LimboState" parent="StateMachine" unique_id=106776043]
+script = ExtResource("6_fjrip")
 
 [node name="Stun" type="LimboState" parent="StateMachine" unique_id=126496179]
 
 [node name="MovementController" type="Node" parent="." unique_id=489200829 node_paths=PackedStringArray("Actor")]
 script = ExtResource("3_qhqgy")
 Actor = NodePath("..")
-BaseSpeed = 250
+BaseSpeed = 175
+JumpVelocity = 350
 DashVelocity = 800
 Acceleration = 25.0
 Friction = 20.0

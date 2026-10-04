@@ -8,7 +8,7 @@ public partial class FallState : LimboState
 
     public override void _Enter()
     {
-        MC = GetNode<MovementController>("../../MovementController");
+        MC = Blackboard.GetVar("MovementController").As<MovementController>();
     }
 
     public override void _PhysicsProcess(double delta)
@@ -29,6 +29,8 @@ public partial class FallState : LimboState
         {
             MC.ApplyFriction(delta, 0.5f);
         }
+
+        MC.Move();
 
         if (MC.Actor.IsOnFloor())
         {

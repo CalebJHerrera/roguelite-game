@@ -4,19 +4,19 @@ using Godot;
 
 public partial class StateMachine : LimboHsm
 {
-    LimboState groundState;
-    LimboState jumpState;
-    LimboState fallState;
-    LimboState dashState;
-    LimboState stunState;
+    private LimboState GroundState { get; set; }
+    private LimboState JumpState { get; set; }
+    private LimboState FallState { get; set; }
+    private LimboState DashState { get; set; }
+    private LimboState StunState { get; set; }
 
     public override void _Ready()
     {
-        groundState = GetNode<LimboState>("Ground");
-        jumpState = GetNode<LimboState>("Jump");
-        fallState = GetNode<LimboState>("Fall");
-        dashState = GetNode<LimboState>("Dash");
-        stunState = GetNode<LimboState>("Stun");
+        GroundState = GetNode<LimboState>("Ground");
+        JumpState = GetNode<LimboState>("Jump");
+        FallState = GetNode<LimboState>("Fall");
+        DashState = GetNode<LimboState>("Dash");
+        StunState = GetNode<LimboState>("Stun");
 
         InitializeHsm();
     }
@@ -24,26 +24,28 @@ public partial class StateMachine : LimboHsm
     private void InitializeHsm()
     {
         // Add transitions
-        AddTransition(groundState, jumpState, "jump_pressed");
-        AddTransition(groundState, fallState, "fell_off_ledge");
-        AddTransition(groundState, dashState, "dash_pressed");
+        AddTransition(GroundState, JumpState, "jump_pressed");
+        AddTransition(GroundState, FallState, "fell_off_ledge");
+        AddTransition(GroundState, DashState, "dash_pressed");
 
-        AddTransition(jumpState, fallState, "apex_reached");
-        AddTransition(jumpState, dashState, "dash_pressed");
+        AddTransition(JumpState, FallState, "apex_reached");
+        AddTransition(JumpState, DashState, "dash_pressed");
+        AddTransition(JumpState, JumpState, "double_jump_used");
 
-        AddTransition(fallState, groundState, "landed");
-        AddTransition(fallState, jumpState, "coyote_failsafe_used");
-        AddTransition(fallState, dashState, "dash_pressed");
+        AddTransition(FallState, GroundState, "landed");
+        AddTransition(FallState, JumpState, "coyote_failsafe_used");
+        AddTransition(FallState, JumpState, "double_jump_used");
+        AddTransition(FallState, DashState, "dash_pressed");
 
-        AddTransition(dashState, groundState, "dash_ended_ground");
-        AddTransition(dashState, fallState, "dash_ended_air");
+        AddTransition(DashState, GroundState, "dash_ended_ground");
+        AddTransition(DashState, FallState, "dash_ended_air");
 
-        AddTransition(ANYSTATE, stunState, "took_damage");
+        AddTransition(ANYSTATE, StunState, "took_damage");
 
-        AddTransition(stunState, groundState, "recovered_on_ground");
-        AddTransition(fallState, groundState, "recovered_in_air");
+        AddTransition(StunState, GroundState, "recovered_on_ground");
+        AddTransition(FallState, GroundState, "recovered_in_air");
 
-        InitialState = groundState;
+        InitialState = GroundState;
         Initialize(this);
         SetActive(true);
     }

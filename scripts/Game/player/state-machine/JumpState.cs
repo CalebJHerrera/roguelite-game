@@ -8,15 +8,13 @@ public partial class JumpState : LimboState
 
     public override void _Enter()
     {
-        MC = GetNode<MovementController>("../../MovementController");
+        MC = Blackboard.GetVar("MovementController").As<MovementController>();
         MC.QueueJump();
     }
 
     public override void _PhysicsProcess(double delta)
     {
         float inputDir = Input.GetAxis("MoveLeft", "MoveRight");
-
-        MC.ApplyGravity(delta);
 
         if (inputDir != 0)
         {
@@ -27,6 +25,7 @@ public partial class JumpState : LimboState
             MC.ApplyFriction(delta, 0.1f);
         }
 
+        MC.ApplyGravity(delta);
         MC.Move(); // Don't change velocities after this.
 
         if (MC.Actor.Velocity.Y == 0)

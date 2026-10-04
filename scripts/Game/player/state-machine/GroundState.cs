@@ -14,6 +14,7 @@ public partial class GroundState : LimboState
     public override void _PhysicsProcess(double delta)
     {
         float inputDir = Input.GetAxis("MoveLeft", "MoveRight");
+
         if (inputDir != 0)
         {
             MC.MoveHorizontal(inputDir, delta);
