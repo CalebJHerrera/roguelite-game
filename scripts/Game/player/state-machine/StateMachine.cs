@@ -12,6 +12,8 @@ public partial class StateMachine : LimboHsm
 
     public override void _Ready()
     {
+        Blackboard.SetVar("IframeActive", false);
+
         GroundState = GetNode<LimboState>("Ground");
         JumpState = GetNode<LimboState>("Jump");
         FallState = GetNode<LimboState>("Fall");

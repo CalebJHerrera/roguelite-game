@@ -36,5 +36,9 @@ public partial class FallState : LimboState
         {
             Dispatch("air_jump_used");
         }
+        else if (Input.IsActionPressed("Dash"))
+        {
+            Dispatch("dash_pressed");
+        }
     }
 }

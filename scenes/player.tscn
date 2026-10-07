@@ -31,11 +31,11 @@ var/MovementController/type = 22
 var/MovementController/value = NodePath("../MovementController")
 var/MovementController/hint = 26
 var/MovementController/hint_string = "MovementController"
-var/var/name = &"var"
-var/var/type = 3
-var/var/value = 0.0
-var/var/hint = 0
-var/var/hint_string = ""
+var/IframeActive/name = &"IframeActive"
+var/IframeActive/type = 1
+var/IframeActive/value = false
+var/IframeActive/hint = 0
+var/IframeActive/hint_string = ""
 
 [node name="Player" type="CharacterBody2D" unique_id=1200534386]
 
@@ -75,9 +75,8 @@ script = ExtResource("6_fjrip")
 script = ExtResource("3_qhqgy")
 Actor = NodePath("..")
 BaseSpeed = 175
-JumpVelocity = 313
-DashVelocity = 800
 Acceleration = 25.0
 Friction = 20.0
+JumpVelocity = 313
 MaxJumps = 1
 metadata/_custom_type_script = "uid://bjypogi6gf10d"

@@ -12,22 +12,32 @@ public partial class MovementController : Node
 
     [ExportGroup("Physics")]
     [Export] public int BaseSpeed { get; set; } = 200;
-    [Export] public int JumpVelocity { get; set; } = 400;
-    [Export] public int DashVelocity { get; set; } = 300;
     [Export] public float Acceleration { get; set; } = 35.0f;
     [Export] public float Friction { get; set; } = 25.0f;
     [Export] public float SpeedMultiplier { get; set; } = 1.0f;
 
     [ExportGroup("Jumps")]
+    [Export] public int JumpVelocity { get; set; } = 400;
     [Export] private float CoyoteTime { get; set; } = 0.15f;
     [Export] private float BufferTime { get; set; } = 0.15f;
     [Export] public int MaxJumps { get; set; } = 2;
 
+    [ExportGroup("Dash")]
+    [Export] public int DashVelocity { get; set; } = 700;
+    [Export] public float DashCooldown { get; set; } = 0.3f;
+    [Export] public float DashDuration { get; set; } = 0.15f;
+    [Export] public int MaxDashes { get; set; } = 1;
+
     // Timers & Counters
     private float CoyoteTimer { get; set; } = 0f;
     private float BufferTimer { get; set; } = 0f;
+    private float DashCooldownTimer { get; set; } = 0f;
     private int JumpsLeft { get; set; }
+    private int DashesLeft { get; set; }
 
+    public int Direction { get; set; } = 1;
+
+    // Random shi
     private float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
     private float FrictionFactor = 1.0f;
 
@@ -37,6 +47,11 @@ public partial class MovementController : Node
         float targetDirection = Mathf.Lerp(Actor.Velocity.X, xDir * BaseSpeed * SpeedMultiplier, lerpFactor);
 
         Actor.Velocity = new Vector2(targetDirection, Actor.Velocity.Y);
+
+        if (xDir != 0)
+        {
+            Direction = Mathf.Sign(xDir); // Potato method
+        }
     }
 
     public void ApplyGravity(double delta)
@@ -61,8 +76,23 @@ public partial class MovementController : Node
         Actor.Velocity = new Vector2(afterFriction, Actor.Velocity.Y);
     }
 
-    public void Dash()
+    public void Dash(float direction)
     {
+        if (CheckDash())
+        {
+            DashCooldownTimer = DashCooldown;
+            Actor.Velocity = new Vector2(DashVelocity * direction, 0f);
+            DashesLeft--;
+        }
+    }
+
+    public bool CheckDash()
+    {
+        if (DashCooldownTimer <= 0 && DashesLeft > 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     public void QueueJump()
@@ -99,7 +129,7 @@ public partial class MovementController : Node
         JumpsLeft--;
     }
 
-    private void UpdateTimers(double delta)
+    private void UpdateTimers(double delta) // Seems to be a universal update method for timers I guess
     {
         CoyoteTimer -= (float)delta;
         BufferTimer -= (float)delta;
@@ -108,10 +138,16 @@ public partial class MovementController : Node
         {
             CoyoteTimer = CoyoteTime;
             JumpsLeft = MaxJumps;
+            DashesLeft = MaxDashes;
         }
         else if (CoyoteTimer <= 0 && JumpsLeft == MaxJumps)
         {
             JumpsLeft = MaxJumps - 1;
+        }
+
+        if (DashCooldownTimer > 0)
+        {
+            DashCooldownTimer -= (float)delta;
         }
     }
 
@@ -125,9 +161,15 @@ public partial class MovementController : Node
         Actor.MoveAndSlide();
     }
 
+    public int GetDirection()
+    {
+        return Direction;
+    }
+
     public override void _EnterTree()
     {
         JumpsLeft = MaxJumps;
+        DashesLeft = MaxDashes;
     }
 
     public override void _PhysicsProcess(double delta)

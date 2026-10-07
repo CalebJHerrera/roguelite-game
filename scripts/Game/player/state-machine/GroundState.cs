@@ -31,5 +31,9 @@ public partial class GroundState : LimboState
         {
             Dispatch("jump_pressed");
         }
+        else if (Input.IsActionPressed("Dash"))
+        {
+            Dispatch("dash_pressed");
+        }
     }
 }
