@@ -41,7 +41,8 @@ public partial class MovementController : Node
 
     public void ApplyGravity(double delta)
     {
-        float afterGravity = Actor.Velocity.Y + Gravity * (float)delta;
+        float rawAfterGravity = Actor.Velocity.Y + Gravity * (float)delta;
+        float afterGravity = Mathf.Min(600f, rawAfterGravity);
         Actor.Velocity = new Vector2(Actor.Velocity.X, afterGravity);
     }
 
