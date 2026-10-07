@@ -79,5 +79,5 @@ JumpVelocity = 313
 DashVelocity = 800
 Acceleration = 25.0
 Friction = 20.0
-MaxJumps = 500
+MaxJumps = 1
 metadata/_custom_type_script = "uid://bjypogi6gf10d"
