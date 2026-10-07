@@ -30,11 +30,10 @@ public partial class StateMachine : LimboHsm
 
         AddTransition(JumpState, FallState, "apex_reached");
         AddTransition(JumpState, DashState, "dash_pressed");
-        AddTransition(JumpState, JumpState, "double_jump_used");
+        AddTransition(JumpState, JumpState, "air_jump_used");
 
         AddTransition(FallState, GroundState, "landed");
-        AddTransition(FallState, JumpState, "coyote_failsafe_used");
-        AddTransition(FallState, JumpState, "double_jump_used");
+        AddTransition(FallState, JumpState, "air_jump_used");
         AddTransition(FallState, DashState, "dash_pressed");
 
         AddTransition(DashState, GroundState, "dash_ended_ground");
@@ -43,7 +42,7 @@ public partial class StateMachine : LimboHsm
         AddTransition(ANYSTATE, StunState, "took_damage");
 
         AddTransition(StunState, GroundState, "recovered_on_ground");
-        AddTransition(FallState, GroundState, "recovered_in_air");
+        AddTransition(StunState, FallState, "recovered_in_air");
 
         InitialState = GroundState;
         Initialize(this);

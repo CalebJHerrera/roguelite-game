@@ -21,10 +21,12 @@ public partial class MovementController : Node
     [ExportGroup("Jumps")]
     [Export] private float CoyoteTime { get; set; } = 0.15f;
     [Export] private float BufferTime { get; set; } = 0.15f;
+    [Export] public int MaxJumps { get; set; } = 2;
 
-    // Actual Timers
+    // Timers & Counters
     private float CoyoteTimer { get; set; } = 0f;
     private float BufferTimer { get; set; } = 0f;
+    private int JumpsLeft { get; set; }
 
     private float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
     private float FrictionFactor = 1.0f;
@@ -69,11 +71,14 @@ public partial class MovementController : Node
 
     private bool CheckJump()
     {
-        if (CoyoteTimer > 0 && BufferTimer > 0)
+        if (JumpsLeft == MaxJumps && CoyoteTimer > 0 && BufferTimer > 0)
         {
             return true;
         }
-
+        else if (JumpsLeft > 0 && BufferTimer > 0)
+        {
+            return true;
+        }
         return false;
     }
 
@@ -90,6 +95,7 @@ public partial class MovementController : Node
     {
         CoyoteTimer = 0f;
         BufferTimer = 0f;
+        JumpsLeft--;
     }
 
     private void UpdateTimers(double delta)
@@ -100,6 +106,11 @@ public partial class MovementController : Node
         if (Actor.IsOnFloor())
         {
             CoyoteTimer = CoyoteTime;
+            JumpsLeft = MaxJumps;
+        }
+        else if (CoyoteTimer <= 0 && JumpsLeft == MaxJumps)
+        {
+            JumpsLeft = MaxJumps - 1;
         }
     }
 
@@ -113,9 +124,14 @@ public partial class MovementController : Node
         Actor.MoveAndSlide();
     }
 
+    public override void _EnterTree()
+    {
+        JumpsLeft = MaxJumps;
+    }
+
     public override void _PhysicsProcess(double delta)
     {
-        ExecuteJump();
         UpdateTimers(delta);
+        ExecuteJump();
     }
 }

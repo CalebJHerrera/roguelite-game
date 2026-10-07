@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://cg444qjad4vfq" path="res://scripts/game/player/state-machine/DashState.cs" id="6_fjrip"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0xm2m"]
-size = Vector2(24, 40)
+size = Vector2(24, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bmph7"]
 size = Vector2(13, 31)
@@ -40,6 +40,7 @@ var/var/hint_string = ""
 [node name="Player" type="CharacterBody2D" unique_id=1200534386]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=579102683]
+position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_0xm2m")
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1263324318]
@@ -74,8 +75,9 @@ script = ExtResource("6_fjrip")
 script = ExtResource("3_qhqgy")
 Actor = NodePath("..")
 BaseSpeed = 175
-JumpVelocity = 350
+JumpVelocity = 313
 DashVelocity = 800
 Acceleration = 25.0
 Friction = 20.0
+MaxJumps = 500
 metadata/_custom_type_script = "uid://bjypogi6gf10d"

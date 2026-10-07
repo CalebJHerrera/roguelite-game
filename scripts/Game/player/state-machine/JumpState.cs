@@ -28,13 +28,17 @@ public partial class JumpState : LimboState
         MC.ApplyGravity(delta);
         MC.Move(); // Don't change velocities after this.
 
-        if (MC.Actor.Velocity.Y == 0)
+        if (MC.Actor.Velocity.Y <= 0)
         {
             Dispatch("apex_reached");
         }
         else if (Input.IsActionPressed("Dash"))
         {
             Dispatch("dash_pressed");
+        }
+        else if (Input.IsActionJustPressed("Jump"))
+        {
+            Dispatch("air_jump_used");
         }
     }
 }

@@ -16,10 +16,6 @@ public partial class FallState : LimboState
         float inputDir = Input.GetAxis("MoveLeft", "MoveRight");
 
         MC.ApplyGravity(delta);
-        if (Input.IsActionPressed("Jump"))
-        {
-            MC.QueueJump();
-        }
 
         if (inputDir != 0)
         {
@@ -35,6 +31,10 @@ public partial class FallState : LimboState
         if (MC.Actor.IsOnFloor())
         {
             Dispatch("landed");
+        }
+        else if (Input.IsActionJustPressed("Jump"))
+        {
+            Dispatch("air_jump_used");
         }
     }
 }
