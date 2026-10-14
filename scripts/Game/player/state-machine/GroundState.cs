@@ -1,31 +1,31 @@
-namespace Game.Player.StateMachine;
-
 using Godot;
+
+namespace RogueliteGame.scripts.game.player.state_machine;
 
 public partial class GroundState : LimboState
 {
-    private MovementController MC { get; set; }
+    private MovementController _moveController;
 
     public override void _Enter()
     {
-        MC = Blackboard.GetVar("MovementController").As<MovementController>();
+        _moveController = Blackboard.GetVar("MovementController").As<MovementController>();
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        float inputDir = Input.GetAxis("MoveLeft", "MoveRight");
+        var inputDir = Input.GetAxis("MoveLeft", "MoveRight");
 
         if (inputDir != 0)
         {
-            MC.MoveHorizontal(inputDir, delta);
+            _moveController.MoveHorizontal(inputDir, delta);
         }
         else
         {
-            MC.ApplyFriction(delta);
+            _moveController.ApplyFriction(delta);
         }
 
-        MC.ApplyGravity(delta);
-        MC.Move();
+        _moveController.ApplyGravity(delta);
+        _moveController.Move();
 
         if (Input.IsActionPressed("Jump"))
         {

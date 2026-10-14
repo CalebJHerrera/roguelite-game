@@ -1,6 +1,6 @@
-namespace Game;
-
 using Godot;
+
+namespace RogueliteGame.scripts.game;
 
 // In case I forget, the player leaf states / AI BT node call the functions inside here. No logic is to be handled in this file, logic is actually in the states/tree nodes.
 // The only stuff in here is the modification of the velocities and some other random weird platformer stuff.
@@ -8,7 +8,7 @@ using Godot;
 public partial class MovementController : Node
 {
     [ExportGroup("Actor")]
-    [Export] public CharacterBody2D Actor { get; set; }
+    [Export] public CharacterBody2D Actor { get; private set; }
 
     [ExportGroup("Physics")]
     [Export] public int BaseSpeed { get; set; } = 200;
@@ -29,22 +29,22 @@ public partial class MovementController : Node
     [Export] public int MaxDashes { get; set; } = 1;
 
     // Timers & Counters
-    private float CoyoteTimer { get; set; } = 0f;
-    private float BufferTimer { get; set; } = 0f;
-    private float DashCooldownTimer { get; set; } = 0f;
+    private float CoyoteTimer { get; set; }
+    private float BufferTimer { get; set; }
+    private float DashCooldownTimer { get; set; }
     private int JumpsLeft { get; set; }
     private int DashesLeft { get; set; }
 
-    public int Direction { get; set; } = 1;
+    private int Direction { get; set; } = 1;
 
     // Random shi
-    private float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
-    private float FrictionFactor = 1.0f;
+    private float _gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
+    private float _frictionFactor = 1.0f;
 
     public void MoveHorizontal(float xDir, double delta)
     {
-        float lerpFactor = CalcLerpFactor(Acceleration, delta);
-        float targetDirection = Mathf.Lerp(Actor.Velocity.X, xDir * BaseSpeed * SpeedMultiplier, lerpFactor);
+        var lerpFactor = CalcLerpFactor(Acceleration, delta);
+        var targetDirection = Mathf.Lerp(Actor.Velocity.X, xDir * BaseSpeed * SpeedMultiplier, lerpFactor);
 
         Actor.Velocity = new Vector2(targetDirection, Actor.Velocity.Y);
 
@@ -56,17 +56,17 @@ public partial class MovementController : Node
 
     public void ApplyGravity(double delta)
     {
-        float rawAfterGravity = Actor.Velocity.Y + Gravity * (float)delta;
-        float afterGravity = Mathf.Min(600f, rawAfterGravity);
+        var rawAfterGravity = Actor.Velocity.Y + _gravity * (float)delta;
+        var afterGravity = Mathf.Min(600f, rawAfterGravity);
         Actor.Velocity = new Vector2(Actor.Velocity.X, afterGravity);
     }
 
     public void ApplyFriction(double delta, float multiplier = 1.0f)
     {
-        // Title mislading, it's just horizontal friction.
-        FrictionFactor = Mathf.MoveToward(FrictionFactor, multiplier, (float)delta * 6.0f);
-        float lerpFactor = CalcLerpFactor(Friction * FrictionFactor, delta);
-        float afterFriction = Mathf.Lerp(Actor.Velocity.X, 0, lerpFactor);
+        // Title misleading, it's just horizontal friction.
+        _frictionFactor = Mathf.MoveToward(_frictionFactor, multiplier, (float)delta * 6.0f);
+        var lerpFactor = CalcLerpFactor(Friction * _frictionFactor, delta);
+        var afterFriction = Mathf.Lerp(Actor.Velocity.X, 0, lerpFactor);
 
         if (Mathf.Abs(afterFriction) < 1.0f)
         {
@@ -78,21 +78,16 @@ public partial class MovementController : Node
 
     public void Dash(float direction)
     {
-        if (CheckDash())
-        {
-            DashCooldownTimer = DashCooldown;
-            Actor.Velocity = new Vector2(DashVelocity * direction, 0f);
-            DashesLeft--;
-        }
+        if (!CheckDash()) { return;}
+        
+        DashCooldownTimer = DashCooldown;
+        Actor.Velocity = new Vector2(DashVelocity * direction, 0f);
+        DashesLeft--;
     }
 
-    public bool CheckDash()
+    private bool CheckDash()
     {
-        if (DashCooldownTimer <= 0 && DashesLeft > 0)
-        {
-            return true;
-        }
-        return false;
+        return DashCooldownTimer <= 0 && DashesLeft > 0;
     }
 
     public void QueueJump()
@@ -115,11 +110,10 @@ public partial class MovementController : Node
 
     private void ExecuteJump()
     {
-        if (CheckJump())
-        {
-            ClearTimers();
-            Actor.Velocity = new Vector2(Actor.Velocity.X, -JumpVelocity);
-        }
+        if (!CheckJump()) { return; }
+        
+        ClearTimers();
+        Actor.Velocity = new Vector2(Actor.Velocity.X, -JumpVelocity);
     }
 
     private void ClearTimers()
@@ -153,7 +147,7 @@ public partial class MovementController : Node
 
     private static float CalcLerpFactor(float var, double delta)
     {
-        return 1.0f - Mathf.Exp(-var * (float)delta); // Had a bug with weird friction and acceleration (jittery), so asked gemini, no idea how this works.
+        return 1.0f - Mathf.Exp(-var * (float)delta); // Had a bug with weird friction and acceleration (jittery), so asked gemini, slight idea on how this works.
     }
 
     public void Move()
@@ -163,7 +157,7 @@ public partial class MovementController : Node
 
     public int GetDirection()
     {
-        return Direction;
+        return Direction; // I guess, man.
     }
 
     public override void _EnterTree()

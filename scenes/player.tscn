@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://cg444qjad4vfq" path="res://scripts/game/player/state-machine/DashState.cs" id="6_fjrip"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0xm2m"]
-size = Vector2(24, 32)
+size = Vector2(16, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bmph7"]
 size = Vector2(13, 31)
@@ -79,4 +79,5 @@ Acceleration = 25.0
 Friction = 20.0
 JumpVelocity = 313
 MaxJumps = 1
+DashCooldown = 0.5
 metadata/_custom_type_script = "uid://bjypogi6gf10d"

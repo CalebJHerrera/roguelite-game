@@ -1,6 +1,6 @@
-namespace Game.Player.StateMachine;
-
 using Godot;
+
+namespace RogueliteGame.scripts.game.player.state_machine;
 
 public partial class StateMachine : LimboHsm
 {
@@ -46,7 +46,7 @@ public partial class StateMachine : LimboHsm
         AddTransition(StunState, GroundState, "recovered_on_ground");
         AddTransition(StunState, FallState, "recovered_in_air");
 
-        InitialState = GroundState;
+        InitialState = FallState;
         Initialize(this);
         SetActive(true);
     }

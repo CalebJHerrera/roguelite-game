@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Roguelite Game"
+config/version="0.0.10"
 run/main_scene="uid://dhgoqpss0bt4a"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 
@@ -19,8 +20,8 @@ config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 window/size/viewport_width=640
 window/size/viewport_height=360
 window/size/maximize_disabled=true
-window/size/window_width_override=800
-window/size/window_height_override=600
+window/size/window_width_override=1600
+window/size/window_height_override=1200
 window/energy_saving/keep_screen_on=false
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"

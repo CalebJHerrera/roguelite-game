@@ -1,47 +1,33 @@
-namespace Game.Player.StateMachine;
-
 using Godot;
+
+namespace RogueliteGame.scripts.game.player.state_machine;
 
 public partial class DashState : LimboState
 {
-    private MovementController MC { get; set; }
+    private MovementController _moveController;
     private float _dashTimer;
     private float _direction;
 
     public override void _Enter()
     {
-        MC = Blackboard.GetVar("MovementController").As<MovementController>();
-        float xDir = Input.GetAxis("MoveLeft", "MoveRight");
-        _dashTimer = MC.DashDuration;
+        _moveController = Blackboard.GetVar("MovementController").As<MovementController>();
+        _dashTimer = _moveController.DashDuration;
+        
+        var xDir = Input.GetAxis("MoveLeft", "MoveRight");
+        _direction = xDir != 0 ? xDir : _moveController.GetDirection();
 
-        if (xDir != 0)
-        {
-            _direction = xDir;
-        }
-        else
-        {
-            _direction = MC.GetDirection();
-        }
-
-        MC.Dash(_direction);
+        _moveController.Dash(_direction);
     }
 
     public override void _PhysicsProcess(double delta)
     {
+        var isOnFloor = _moveController.Actor.IsOnFloor();
+        
+        _moveController.Move();
         _dashTimer -= (float)delta;
 
-        MC.Move();
+        if (_dashTimer <= 0) { return; }
 
-        if (_dashTimer <= 0)
-        {
-            if (MC.Actor.IsOnFloor())
-            {
-                Dispatch("dash_ended_ground");
-            }
-            else
-            {
-                Dispatch("dash_ended_air");
-            }
-        }
+        Dispatch(isOnFloor ? "dash_ended_ground" : "dash_ended_air");
     }
 }
